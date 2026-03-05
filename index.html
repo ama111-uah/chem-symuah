@@ -927,6 +927,162 @@
         @keyframes pulse-anim { from { opacity: 0.6; } to { opacity: 1.0; } }
 
         /* Symmetry layout: panel izquierdo + visor derecho */
+        /* Tolerancia configurable */
+        .tol-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+        }
+        .tol-label {
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .tol-mode-btns { display: flex; gap: 4px; }
+        .tol-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 4px 11px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            transition: border-color 0.15s, color 0.15s, background 0.15s;
+            box-shadow: none;
+        }
+        .tol-btn.active {
+            background: rgba(45, 212, 191, 0.12);
+            border-color: var(--glass-teal);
+            color: var(--glass-teal);
+        }
+        .tol-btn:hover:not(.active) {
+            border-color: var(--text-secondary);
+            transform: none;
+            box-shadow: none;
+        }
+        .tol-slider-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tol-slider-wrap input[type="range"] {
+            width: 90px;
+            accent-color: var(--glass-teal);
+        }
+        .tol-val {
+            color: var(--glass-teal);
+            min-width: 46px;
+            font-size: 0.78rem;
+        }
+        /* ── Zona de arrastre para importar ficheros ── */
+        .file-drop-zone {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            min-height: 72px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            background: var(--dark-bg);
+            color: var(--text-secondary);
+            font-size: 0.82rem;
+            font-family: 'JetBrains Mono', monospace;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            text-align: center;
+        }
+        .file-drop-zone.drag-over {
+            border-color: var(--glass-teal);
+            background: rgba(45, 212, 191, 0.05);
+        }
+        .file-drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .file-drop-zone .drop-icon { font-size: 1.4rem; line-height: 1; }
+        .file-drop-hint {
+            font-size: 0.73rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+        .xyz-label-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+        .xyz-label-row label { color: var(--text-secondary); font-size: 0.85rem; }
+        .xyz-from-file-note {
+            font-size: 0.73rem;
+            color: var(--glass-green);
+            font-family: 'JetBrains Mono', monospace;
+            display: none;
+        }
+        /* Aviso unidad asimétrica (CIF/RES sin expansión de simetría) */
+        .asym-warning {
+            background: rgba(239, 68, 68, 0.07);
+            border: 1px solid rgba(239, 68, 68, 0.35);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.73rem;
+            color: #f87171;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        /* Aviso modo disolución / manual */
+        .sol-warning {
+            background: rgba(251, 191, 36, 0.07);
+            border: 1px solid rgba(251, 191, 36, 0.32);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.73rem;
+            color: #fbbf24;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        /* Elementos detectados solo con tolerancia ampliada */
+        .sym-toggle.relaxed-only {
+            border-style: dashed;
+            opacity: 0.80;
+        }
+        .sym-toggle.relaxed-only::after {
+            content: ' ≈';
+            font-size: 0.8em;
+            opacity: 0.75;
+        }
+        .pg-context {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 4px;
+            padding: 3px 8px;
+            border-radius: 3px;
+        }
+        .pg-context.ctx-crystal {
+            color: var(--glass-teal);
+            border: 1px solid rgba(45,212,191,0.3);
+        }
+        .pg-context.ctx-solution {
+            color: #fbbf24;
+            border: 1px solid rgba(251,191,36,0.3);
+        }
+
         .sym-layout {
             display: flex;
             gap: 12px;
@@ -1532,7 +1688,7 @@
                 <h2>Analizador de Simetría Molecular</h2>
                 <div class="tab-bar">
                     <button type="button" class="tab-btn active" id="sym-tab-db">Base de datos</button>
-                    <button type="button" class="tab-btn" id="sym-tab-xyz">Importar XYZ</button>
+                    <button type="button" class="tab-btn" id="sym-tab-xyz">Coordenadas</button>
                 </div>
 
                 <div id="sym-db-section">
@@ -1548,9 +1704,40 @@
                 </div>
 
                 <div id="sym-xyz-section" class="hidden">
-                    <label for="sym-xyz-input">Pegar coordenadas XYZ</label>
+                    <!-- Zona de arrastre / selector de fichero -->
+                    <div class="file-drop-zone" id="sym-file-drop">
+                        <span class="drop-icon">&#128196;</span>
+                        <span>Arrastra un archivo o haz clic para seleccionar</span>
+                        <span class="file-drop-hint">Formatos soportados: .xyz &nbsp;·&nbsp; .cif &nbsp;·&nbsp; .pdb &nbsp;·&nbsp; .res (SHELX)</span>
+                        <input type="file" id="sym-file-input" accept=".xyz,.cif,.pdb,.res,.ins,.ent">
+                    </div>
+                    <!-- Aviso unidad asimétrica: visible solo tras cargar CIF/RES -->
+                    <div id="sym-asym-warning" class="asym-warning" style="display:none">
+                        ⚠ Archivo cristalográfico: solo se han cargado los átomos de la <strong>unidad asimétrica</strong>.
+                        La molécula puede estar incompleta si el compuesto tiene simetría cristalográfica.<br>
+                        Para obtener la molécula completa, ábrala en <strong>Mercury (CCDC)</strong> y exporte a formato <strong>.xyz</strong>.
+                    </div>
+                    <!-- Textarea XYZ: manual o auto-poblada desde fichero -->
+                    <div class="xyz-label-row">
+                        <label for="sym-xyz-input">Coordenadas XYZ</label>
+                        <span class="xyz-from-file-note" id="sym-xyz-from-file-note">&#10003; cargado desde archivo</span>
+                    </div>
                     <textarea class="xyz-textarea" id="sym-xyz-input" placeholder="3&#10;Water&#10;O  0.000  0.000  0.117&#10;H  0.000  0.757 -0.470&#10;H  0.000 -0.757 -0.470"></textarea>
                     <button id="sym-parse-xyz-btn" style="margin-top:12px">Analizar</button>
+                </div>
+
+                <!-- Control de tolerancia geométrica -->
+                <div class="tol-control" id="sym-tol-control">
+                    <span class="tol-label">Contexto:</span>
+                    <div class="tol-mode-btns">
+                        <button type="button" class="tol-btn active" data-tol-mode="crystal">Cristal</button>
+                        <button type="button" class="tol-btn" data-tol-mode="solution">Disolución</button>
+                        <button type="button" class="tol-btn" data-tol-mode="manual">Manual</button>
+                    </div>
+                    <div id="tol-slider-wrap" class="tol-slider-wrap" style="display:none">
+                        <input type="range" id="tol-slider" min="5" max="50" value="25" step="1">
+                        <span class="tol-val" id="tol-slider-val">0.25 Å</span>
+                    </div>
                 </div>
 
                 <div id="sym-error" class="error hidden"></div>
@@ -4044,6 +4231,404 @@
             return atoms;
         }
 
+        // ─── Conversión coordenadas fraccionarias → cartesianas ───────────────
+        // Convención IUCr: a ∥ +X, b en plano XY, c general. Ángulos en grados.
+        function fracToCart(fx, fy, fz, a, b, c, alpha, beta, gamma) {
+            var r = Math.PI / 180;
+            var cA = Math.cos(alpha*r), cB = Math.cos(beta*r), cG = Math.cos(gamma*r);
+            var sG = Math.sin(gamma*r);
+            var V  = Math.sqrt(1 - cA*cA - cB*cB - cG*cG + 2*cA*cB*cG);
+            return [
+                a*fx + b*cG*fy + c*cB*fz,
+                b*sG*fy + c*(cA - cB*cG)/sG*fz,
+                c*V/sG*fz
+            ];
+        }
+
+        // ─── Operaciones de simetría cristalográfica ──────────────────────────
+
+        // Parsea cadena tipo "-x+1/2, y+1/2, -z" → {R:[[3x3]], t:[tx,ty,tz]}
+        function parseSymOp(str) {
+            var parts = str.toLowerCase().replace(/\s+/g,'').split(',');
+            if (parts.length !== 3) return null;
+            var R = [[0,0,0],[0,0,0],[0,0,0]], t = [0,0,0];
+            for (var i = 0; i < 3; i++) {
+                var terms = parts[i].match(/[+-]?[^+-]+/g) || [];
+                for (var j = 0; j < terms.length; j++) {
+                    var term = terms[j];
+                    var sign = 1;
+                    if (term[0]==='-') { sign=-1; term=term.slice(1); }
+                    else if (term[0]==='+') { term=term.slice(1); }
+                    var vi = term.indexOf('x')!==-1?0 : term.indexOf('y')!==-1?1 : term.indexOf('z')!==-1?2 : -1;
+                    if (vi !== -1) {
+                        var coef = term.replace(/[xyz]/,'');
+                        R[i][vi] = sign * (coef===''?1 : parseFloat(coef)||1);
+                    } else {
+                        var fp = term.split('/');
+                        var val = fp.length===2 ? parseFloat(fp[0])/parseFloat(fp[1]) : parseFloat(term);
+                        if (!isNaN(val)) t[i] += sign*val;
+                    }
+                }
+            }
+            return {R:R, t:t};
+        }
+
+        // Aplica operación de simetría a coordenadas fraccionarias
+        function applySymOp(op, f) {
+            return [
+                op.R[0][0]*f[0]+op.R[0][1]*f[1]+op.R[0][2]*f[2]+op.t[0],
+                op.R[1][0]*f[0]+op.R[1][1]*f[1]+op.R[1][2]*f[2]+op.t[1],
+                op.R[2][0]*f[0]+op.R[2][1]*f[1]+op.R[2][2]*f[2]+op.t[2]
+            ];
+        }
+
+        // Envuelve coordenada fraccionaria al rango [0, 1)
+        function wrapFrac(f) {
+            return [(f[0]%1+1)%1, (f[1]%1+1)%1, (f[2]%1+1)%1];
+        }
+
+        // ¿Dos posiciones fraccionarias son equivalentes (con periodicidad)?
+        function fracEq(f1, f2, tol) {
+            for (var k=0; k<3; k++) { var d=Math.abs(f1[k]-f2[k]); if(d>0.5)d=1-d; if(d>tol)return false; }
+            return true;
+        }
+
+        // Centraciones de red para SHELX LATT (|LATT| → traslaciones adicionales)
+        var LATT_CENT = {
+            1:[[0,0,0]],
+            2:[[0,0,0],[.5,.5,.5]],
+            3:[[0,0,0],[2/3,1/3,1/3],[1/3,2/3,2/3]],
+            4:[[0,0,0],[0,.5,.5],[.5,0,.5],[.5,.5,0]],
+            5:[[0,0,0],[0,.5,.5]],
+            6:[[0,0,0],[.5,0,.5]],
+            7:[[0,0,0],[.5,.5,0]]
+        };
+
+        // Construye lista completa de operaciones de simetría para ficheros SHELX
+        // lattN: valor de LATT (positivo=centrosimétrico, negativo=no); symmStrs: array de cadenas SYMM
+        function buildSymOpsRES(lattN, symmStrs) {
+            var n = Math.abs(lattN||1);
+            var centrosym = (lattN||0) > 0;
+            var centers = LATT_CENT[n] || [[0,0,0]];
+            var basic = [{R:[[1,0,0],[0,1,0],[0,0,1]], t:[0,0,0]}];
+            for (var i=0; i<symmStrs.length; i++) { var op=parseSymOp(symmStrs[i]); if(op) basic.push(op); }
+            if (centrosym) {
+                var inv = basic.map(function(op){
+                    return {R:[[-op.R[0][0],-op.R[0][1],-op.R[0][2]],
+                               [-op.R[1][0],-op.R[1][1],-op.R[1][2]],
+                               [-op.R[2][0],-op.R[2][1],-op.R[2][2]]],
+                            t:[-op.t[0],-op.t[1],-op.t[2]]};
+                });
+                basic = basic.concat(inv);
+            }
+            var all = [];
+            for (var bi=0; bi<basic.length; bi++)
+                for (var ci=0; ci<centers.length; ci++)
+                    all.push({R:basic[bi].R, t:[basic[bi].t[0]+centers[ci][0],
+                                                basic[bi].t[1]+centers[ci][1],
+                                                basic[bi].t[2]+centers[ci][2]]});
+            return all;
+        }
+
+        // Expande unidad asimétrica con operaciones de simetría y extrae molécula por conectividad BFS
+        // asymFrac: [{el:string, f:[fx,fy,fz]}]  symOps: [{R,t}]  cell: {a,b,c,alpha,beta,gamma}
+        function expandAndExtractMolecule(asymFrac, symOps, cell) {
+            var fracTol = 0.02;
+
+            // 1. Generar posiciones únicas en [0,1) aplicando todas las operaciones
+            var uniq = [];
+            for (var ai=0; ai<asymFrac.length; ai++) {
+                var atom = asymFrac[ai];
+                for (var si=0; si<symOps.length; si++) {
+                    var fw = wrapFrac(applySymOp(symOps[si], atom.f));
+                    var dup = false;
+                    for (var di=0; di<uniq.length; di++) {
+                        if (uniq[di].el===atom.el && fracEq(uniq[di].f, fw, fracTol)) { dup=true; break; }
+                    }
+                    if (!dup) uniq.push({el:atom.el, f:fw.slice()});
+                }
+            }
+            if (uniq.length === 0) return [];
+
+            var n = uniq.length;
+            var radii = uniq.map(function(a){ return covalentRadii[a.el]||1.5; });
+
+            // Precomputar vectores de celda cartesianos para traslaciones eficientes
+            var la = fracToCart(1,0,0, cell.a,cell.b,cell.c, cell.alpha,cell.beta,cell.gamma);
+            var lb = fracToCart(0,1,0, cell.a,cell.b,cell.c, cell.alpha,cell.beta,cell.gamma);
+            var lc = fracToCart(0,0,1, cell.a,cell.b,cell.c, cell.alpha,cell.beta,cell.gamma);
+            var baseCart = uniq.map(function(u) {
+                return fracToCart(u.f[0],u.f[1],u.f[2], cell.a,cell.b,cell.c, cell.alpha,cell.beta,cell.gamma);
+            });
+
+            function getCart(fi, tx, ty, tz) {
+                var b = baseCart[fi];
+                return [b[0]+tx*la[0]+ty*lb[0]+tz*lc[0],
+                        b[1]+tx*la[1]+ty*lb[1]+tz*lc[1],
+                        b[2]+tx*la[2]+ty*lb[2]+tz*lc[2]];
+            }
+
+            // 2. BFS periódico: expande molécula conexa desde el primer átomo (0,0,0)
+            var visited = {};
+            var queue = [];
+            function addNode(fi, tx, ty, tz) {
+                var key = fi+'_'+tx+'_'+ty+'_'+tz;
+                if (visited[key]) return;
+                visited[key] = true;
+                queue.push({fi:fi, tx:tx, ty:ty, tz:tz});
+            }
+            addNode(0, 0, 0, 0);
+
+            var result = [];
+            var MAX = 5000;
+            for (var qi=0; qi<queue.length && result.length<MAX; qi++) {
+                var cur = queue[qi];
+                var C1 = getCart(cur.fi, cur.tx, cur.ty, cur.tz);
+                result.push([uniq[cur.fi].el, C1[0], C1[1], C1[2]]);
+                var ri = radii[cur.fi];
+                for (var fi2=0; fi2<n; fi2++) {
+                    var dmax2 = (ri+radii[fi2])*(ri+radii[fi2])*1.69; // (×1.3)²
+                    for (var dtx=-1; dtx<=1; dtx++) for (var dty=-1; dty<=1; dty++) for (var dtz=-1; dtz<=1; dtz++) {
+                        var C2 = getCart(fi2, cur.tx+dtx, cur.ty+dty, cur.tz+dtz);
+                        var dx=C1[0]-C2[0], dy=C1[1]-C2[1], dz=C1[2]-C2[2];
+                        if (dx*dx+dy*dy+dz*dz <= dmax2) addNode(fi2, cur.tx+dtx, cur.ty+dty, cur.tz+dtz);
+                    }
+                }
+            }
+            return result;
+        }
+
+        // ─── Parser CIF (Crystallographic Information File) ──────────────────
+        function parseCIF(text) {
+            function cifFloat(s) { return parseFloat(s.replace(/\(.*?\)/g, '')); }
+            var lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+            var cell = { a:null, b:null, c:null, alpha:90, beta:90, gamma:90 };
+            var scalarMap = {
+                '_cell_length_a':'a','_cell_length_b':'b','_cell_length_c':'c',
+                '_cell_angle_alpha':'alpha','_cell_angle_beta':'beta','_cell_angle_gamma':'gamma'
+            };
+            // Paso 1: parámetros de celda (pares clave–valor)
+            for (var i = 0; i < lines.length; i++) {
+                var t = lines[i].trim(); if (!t || t[0]==='#') continue;
+                var tok = t.split(/\s+/);
+                var lk = tok[0].toLowerCase();
+                if (scalarMap[lk] && tok[1]) cell[scalarMap[lk]] = cifFloat(tok[1]);
+            }
+            if (cell.a === null || cell.b === null || cell.c === null)
+                throw new Error('CIF: faltan parámetros de celda (_cell_length_a/b/c).');
+
+            // Tokenizador CIF: respeta cadenas entre comillas simples o dobles
+            function tokenizeLine(dl) {
+                var toks = [], rem = dl;
+                while (rem.length) {
+                    rem = rem.replace(/^\s+/,'');
+                    if (!rem.length) break;
+                    var q = rem[0];
+                    if (q==="'" || q==='"') {
+                        var e = rem.indexOf(q,1);
+                        toks.push(e===-1 ? rem.slice(1) : rem.slice(1,e));
+                        rem = e===-1 ? '' : rem.slice(e+1);
+                    } else {
+                        var sp = rem.search(/\s/);
+                        if (sp===-1) { toks.push(rem); rem=''; }
+                        else { toks.push(rem.slice(0,sp)); rem=rem.slice(sp); }
+                    }
+                }
+                return toks;
+            }
+
+            // Claves CIF de operaciones de simetría (varios dialectos)
+            var symOpKeys = ['_symmetry_equiv_pos_as_xyz','_space_group_symop_operation_xyz',
+                             '_space_group_symop.operation_xyz'];
+
+            // Paso 2: bloques loop_ — átomos y operaciones de simetría
+            var asymFrac = []; // [{el, f:[fx,fy,fz]}]
+            var symOps   = []; // [{R, t}]
+            var i = 0;
+            while (i < lines.length) {
+                if (lines[i].trim().toLowerCase() === 'loop_') {
+                    i++;
+                    var headers = [];
+                    while (i < lines.length && lines[i].trim().startsWith('_')) {
+                        headers.push(lines[i].trim().toLowerCase()); i++;
+                    }
+                    // ¿Es loop de operaciones de simetría?
+                    var iSymOp = -1;
+                    for (var k=0; k<headers.length; k++) {
+                        if (symOpKeys.indexOf(headers[k]) !== -1) { iSymOp=k; break; }
+                    }
+                    // ¿Es loop de átomos?
+                    var iLbl = headers.indexOf('_atom_site_label');
+                    var iSym = headers.indexOf('_atom_site_type_symbol');
+                    var iFx  = headers.indexOf('_atom_site_fract_x');
+                    var iFy  = headers.indexOf('_atom_site_fract_y');
+                    var iFz  = headers.indexOf('_atom_site_fract_z');
+                    // Leer filas de datos
+                    while (i < lines.length) {
+                        var dl = lines[i].trim();
+                        if (!dl || dl[0]==='_' || dl.toLowerCase().startsWith('loop_') || dl[0]==='#' || dl.startsWith('data_')) break;
+                        if (dl[0]===';') { i++; continue; } // texto multilínea: saltar
+                        var toks = tokenizeLine(dl);
+                        if (iSymOp !== -1 && toks.length > iSymOp) {
+                            // Fila del loop de simetría: puede ser "1 x,y,z" o simplemente "x,y,z"
+                            // Probamos cada token hasta encontrar uno que parseSymOp entienda
+                            for (var ki=0; ki<toks.length; ki++) {
+                                if (toks[ki].match(/[xyz]/i)) {
+                                    var op = parseSymOp(toks[ki]);
+                                    if (op) { symOps.push(op); break; }
+                                }
+                            }
+                        } else if (iFx !== -1 && iFy !== -1 && iFz !== -1 && toks.length >= headers.length) {
+                            var fx=cifFloat(toks[iFx]), fy=cifFloat(toks[iFy]), fz=cifFloat(toks[iFz]);
+                            if (!isNaN(fx) && !isNaN(fy) && !isNaN(fz)) {
+                                var rawEl = (iSym!==-1 && toks[iSym] && toks[iSym]!=='?')
+                                    ? toks[iSym]
+                                    : (iLbl!==-1 ? toks[iLbl].replace(/[0-9_\-\+\.]+$/,'').replace(/[0-9].*$/,'') : '');
+                                var el = rawEl.charAt(0).toUpperCase() + rawEl.slice(1).toLowerCase();
+                                if (el && el!=='?') asymFrac.push({el:el, f:[fx,fy,fz]});
+                            }
+                        }
+                        i++;
+                    }
+                    continue;
+                }
+                i++;
+            }
+            if (asymFrac.length === 0)
+                throw new Error('CIF: no se encontraron átomos. Comprueba que el archivo contiene _atom_site_fract_x/y/z.');
+
+            // Si hay operaciones de simetría: expandir y extraer molécula
+            if (symOps.length > 0) {
+                var expanded = expandAndExtractMolecule(asymFrac, symOps, cell);
+                if (expanded.length > 0) return expanded;
+            }
+            // Sin operaciones de simetría (o expansión vacía): devolver unidad asimétrica
+            return asymFrac.map(function(a) {
+                var c = fracToCart(a.f[0],a.f[1],a.f[2], cell.a,cell.b,cell.c, cell.alpha,cell.beta,cell.gamma);
+                return [a.el, c[0], c[1], c[2]];
+            });
+        }
+
+        // ─── Parser PDB (Protein Data Bank) ──────────────────────────────────
+        // Registros ATOM y HETATM; coordenadas ya en Å cartesianas.
+        function parsePDB(text) {
+            var lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+            var atoms = [];
+            for (var i = 0; i < lines.length; i++) {
+                var ln = lines[i];
+                var rec = ln.substring(0,6).trim().toUpperCase();
+                if (rec !== 'ATOM' && rec !== 'HETATM') continue;
+                if (ln.length < 54) continue;
+                var x = parseFloat(ln.substring(30,38));
+                var y = parseFloat(ln.substring(38,46));
+                var z = parseFloat(ln.substring(46,54));
+                if (isNaN(x)||isNaN(y)||isNaN(z)) continue;
+                var el = (ln.length >= 78) ? ln.substring(76,78).trim() : '';
+                if (!el) el = ln.substring(12,16).trim().replace(/[0-9]/g,'');
+                el = el.charAt(0).toUpperCase() + el.slice(1).toLowerCase();
+                if (el) atoms.push([el, x, y, z]);
+            }
+            if (atoms.length === 0)
+                throw new Error('PDB: no se encontraron registros ATOM/HETATM con coordenadas válidas.');
+            return atoms;
+        }
+
+        // ─── Parser SHELX .res / .ins ─────────────────────────────────────────
+        function parseRES(text) {
+            var lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+            var a, b, c, alpha, beta, gamma;
+            var sfac = [];
+            var asymFrac = []; // [{el, f:[fx,fy,fz]}]
+            var lattN = -1;    // valor de LATT; -1=no especificado (non-centrosymmetric P por defecto)
+            var symmStrs = []; // cadenas de instrucciones SYMM
+            var stop = ['hklf','end','q','rems','bond','conf','mpla','wght','fvar','basf'];
+            for (var i = 0; i < lines.length; i++) {
+                var ln = lines[i].trim();
+                if (!ln || ln.toUpperCase().startsWith('REM')) continue;
+                // Líneas de continuación (terminan en =)
+                while (ln.endsWith('=') && i+1 < lines.length)
+                    ln = ln.slice(0,-1) + ' ' + lines[++i].trim();
+                var p = ln.split(/\s+/), kw = p[0].toUpperCase();
+                if (kw === 'CELL' && p.length >= 8) {
+                    a=parseFloat(p[2]); b=parseFloat(p[3]); c=parseFloat(p[4]);
+                    alpha=parseFloat(p[5]); beta=parseFloat(p[6]); gamma=parseFloat(p[7]);
+                    continue;
+                }
+                if (kw === 'SFAC') {
+                    sfac = [];
+                    for (var j=1; j<p.length; j++)
+                        sfac.push(p[j].charAt(0).toUpperCase()+p[j].slice(1).toLowerCase());
+                    continue;
+                }
+                if (kw === 'LATT' && p.length >= 2) {
+                    lattN = parseInt(p[1]);
+                    continue;
+                }
+                if (kw === 'SYMM') {
+                    // Todo lo que sigue a SYMM en la línea es la operación
+                    symmStrs.push(p.slice(1).join(' '));
+                    continue;
+                }
+                if (a !== undefined && sfac.length > 0) {
+                    if (stop.indexOf(kw.toLowerCase()) !== -1) continue;
+                    if (p.length >= 5) {
+                        var idx = parseInt(p[1]);
+                        var fx=parseFloat(p[2]), fy=parseFloat(p[3]), fz=parseFloat(p[4]);
+                        if (!isNaN(idx) && idx>=1 && idx<=sfac.length
+                            && !isNaN(fx) && !isNaN(fy) && !isNaN(fz)
+                            && Math.abs(fx)<=2 && Math.abs(fy)<=2 && Math.abs(fz)<=2) {
+                            asymFrac.push({el:sfac[idx-1], f:[fx,fy,fz]});
+                        }
+                    }
+                }
+            }
+            if (a === undefined || isNaN(a))
+                throw new Error('RES/INS: no se encontró la línea CELL con parámetros de celda.');
+            if (sfac.length === 0)
+                throw new Error('RES/INS: no se encontró la línea SFAC con los elementos.');
+            if (asymFrac.length === 0)
+                throw new Error('RES/INS: no se encontraron átomos válidos.');
+
+            var cell = {a:a, b:b, c:c, alpha:alpha, beta:beta, gamma:gamma};
+            var symOps = buildSymOpsRES(lattN, symmStrs);
+            var expanded = expandAndExtractMolecule(asymFrac, symOps, cell);
+            if (expanded.length > 0) return expanded;
+            // Fallback: unidad asimétrica sin expansión
+            return asymFrac.map(function(at) {
+                var c3 = fracToCart(at.f[0],at.f[1],at.f[2], a,b,c, alpha,beta,gamma);
+                return [at.el, c3[0], c3[1], c3[2]];
+            });
+        }
+
+        // ─── Detección automática de formato ─────────────────────────────────
+        function detectAndParse(text, filename) {
+            var ext = '';
+            if (filename) { var d = filename.lastIndexOf('.'); if (d!==-1) ext = filename.slice(d+1).toLowerCase(); }
+            if (ext==='cif') return parseCIF(text);
+            if (ext==='pdb'||ext==='ent') return parsePDB(text);
+            if (ext==='res'||ext==='ins') return parseRES(text);
+            if (ext==='xyz') return parseXYZ(text);
+            // Sniffing por contenido
+            var head = text.substring(0,512);
+            if (head.indexOf('data_')!==-1 && head.indexOf('_cell_length')!==-1) return parseCIF(text);
+            if (/^(ATOM|HETATM)\s/m.test(text.substring(0,1024))) return parsePDB(text);
+            if (/^CELL\s/im.test(head) && /^SFAC\s/im.test(text.substring(0,1024))) return parseRES(text);
+            return parseXYZ(text);
+        }
+
+        // ─── Convertir array de átomos a texto XYZ para mostrar en textarea ──
+        function atomsToXYZText(atoms, comment) {
+            var lines = [String(atoms.length), comment || 'Imported'];
+            for (var i = 0; i < atoms.length; i++) {
+                var a = atoms[i];
+                lines.push((a[0]+'   ').slice(0,4)
+                    + '  ' + a[1].toFixed(6)
+                    + '  ' + a[2].toFixed(6)
+                    + '  ' + a[3].toFixed(6));
+            }
+            return lines.join('\n');
+        }
+
         // Utilidades matemáticas para simetría
 
         // Producto vectorial
@@ -4333,10 +4918,36 @@
             return unique;
         }
 
+        // Estado global de tolerancia
+        var symTolMode   = 'crystal'; // 'crystal' | 'solution' | 'manual'
+        var symTolManual = 0.25;       // Å, solo en modo manual
+        var symSolTol    = 0.25;       // Å, tolerancia fija para disolución
+
+        // Wrapper: ejecuta el análisis una o dos veces según el modo
+        function runSymmetryAnalysis(atoms) {
+            var centered = centerMolecule(atoms);
+            var crystalTol = adaptiveTolerance(centered);
+            var crystalResult = detectSymmetry(atoms, crystalTol);
+            crystalResult.tolMode = 'crystal';
+            crystalResult.tolUsed = crystalTol;
+
+            if (symTolMode === 'crystal') {
+                return crystalResult;
+            }
+
+            var userTol = (symTolMode === 'manual') ? symTolManual : symSolTol;
+            var solResult = detectSymmetry(atoms, userTol);
+            solResult.tolMode = symTolMode;
+            solResult.tolUsed = userTol;
+            solResult.crystalResult = crystalResult;
+            solResult.crystalTol = crystalTol;
+            return solResult;
+        }
+
         // Detectar todas las operaciones de simetría
-        function detectSymmetry(atoms) {
+        function detectSymmetry(atoms, forceTol) {
             atoms = centerMolecule(atoms);
-            var tol = adaptiveTolerance(atoms);
+            var tol = (forceTol !== undefined) ? forceTol : adaptiveTolerance(atoms);
 
             var elements = [];
             var cnAxes = {}; // {n: [{axis, tested}]}
@@ -4967,9 +5578,39 @@
         function renderSymmetryResults(symResult) {
             symElementShown = {};
 
+            // — Comparación cristal vs disolución —
+            var cr = symResult.crystalResult || null; // null en modo cristal
+            var isSolMode = (symResult.tolMode && symResult.tolMode !== 'crystal');
+
+            // Contadores del resultado de cristal para marcar elementos relajados
+            var crCnCounts  = {};  // n → número de ejes Cn detectados a tol. cristal
+            var crSigmaTotal = 0;
+            var crHasInv    = false;
+            var crSnCounts  = {};
+            if (cr) {
+                for (var nn in cr.cnAxes)  crCnCounts[nn]  = cr.cnAxes[nn].length;
+                crSigmaTotal = cr.sigmaPlanes.length;
+                crHasInv     = cr.hasInversion;
+                for (var nn in cr.snAxes)  crSnCounts[nn]  = cr.snAxes[nn].length;
+            }
+            var sigmaGlobalIdx = 0; // contador de planos para saber cuáles son "nuevos"
+
             // Grupo puntual
+            var ctxLabel = isSolMode
+                ? (symResult.tolMode === 'manual'
+                    ? 'Manual (' + symResult.tolUsed.toFixed(2) + '\u00C5)'
+                    : 'Disolución')
+                : 'Cristal';
+            var ctxClass = isSolMode ? 'ctx-solution' : 'ctx-crystal';
+
             var pgHTML = '<div class="pg-label">Grupo Puntual</div>';
             pgHTML += '<div class="pg-value">' + formatPGHTML(symResult.pointGroup) + '</div>';
+            pgHTML += '<div class="pg-context ' + ctxClass + '">' + ctxLabel + '</div>';
+
+            // Si el grupo puntual cambió respecto al cristal, mostrar ambos
+            if (cr && cr.pointGroup !== symResult.pointGroup) {
+                pgHTML += '<div class="pg-context ctx-crystal" style="margin-top:3px">Cristal: ' + formatPGHTML(cr.pointGroup) + '</div>';
+            }
             pgHTML += '<div class="pg-elements">' + symResult.elements.join(' | ') + '</div>';
             document.getElementById('sym-point-group').innerHTML = pgHTML;
 
@@ -4979,6 +5620,27 @@
             // Toggles
             var togglesDiv = document.getElementById('sym-toggles');
             togglesDiv.innerHTML = '';
+
+            // Aviso de modo disolución / manual
+            if (isSolMode) {
+                var newCount = 0;
+                symResult.elements.forEach(function(el) {
+                    if (!(cr && cr.elements.indexOf(el) >= 0)) newCount++;
+                });
+                var warnDiv = document.createElement('div');
+                warnDiv.className = 'sol-warning';
+                var modeStr = symResult.tolMode === 'manual'
+                    ? 'manual (' + symResult.tolUsed.toFixed(2) + '\u00C5)'
+                    : 'disolución (' + symResult.tolUsed.toFixed(2) + '\u00C5)';
+                var warnTxt = '\u26A0 Modo ' + modeStr + ' \u2014 tolerancia ampliada respecto al cristal (' + symResult.crystalTol.toFixed(3) + '\u00C5).';
+                if (newCount > 0) {
+                    warnTxt += ' Los elementos marcados con \u2248 solo se detectan con esta tolerancia.';
+                } else {
+                    warnTxt += ' No se detectaron operaciones adicionales respecto al cristal.';
+                }
+                warnDiv.textContent = warnTxt;
+                togglesDiv.appendChild(warnDiv);
+            }
 
             var axisColors = {2: 0xFFFF00, 3: 0x00FF00, 4: 0x00AAFF, 5: 0xFF00FF, 6: 0xFF5500, 7: 0xAA00FF, 8: 0x00FFAA};
 
@@ -5035,11 +5697,14 @@
                         axisGroups[groupKey].push(ca);
                     }
                 }
+                // Contador de ejes por orden (global para comparación con cristal)
+                var cnGlobalIdx = {}; // n → cuántos botones llevamos de ese orden
                 for (var gk in axisGroups) {
                     var group = axisGroups[gk];
                     var parts = gk.split('_');
                     var n = parts[0];
                     var axType = parts.slice(1).join('_');
+                    if (cnGlobalIdx[n] === undefined) cnGlobalIdx[n] = 0;
                     for (var i = 0; i < group.length; i++) {
                         var axis = group[i].axis;
                         var label = 'C' + n + axType;
@@ -5047,13 +5712,16 @@
                         var key = 'Cn_' + JSON.stringify(data);
                         var btn = document.createElement('button');
                         btn.type = 'button';
-                        btn.className = 'sym-toggle';
+                        var isRelaxed = cr && (cnGlobalIdx[n] >= (crCnCounts[n] || 0));
+                        btn.className = 'sym-toggle' + (isRelaxed ? ' relaxed-only' : '');
                         btn.textContent = label + (group.length > 1 ? ' (' + (i+1) + ')' : '');
+                        if (isRelaxed) btn.title = 'Detectado solo con tolerancia ampliada';
                         btn.setAttribute('data-sym-key', key);
                         (function(t, d, sr) {
                             btn.addEventListener('click', function() { toggleSymElement(t, d, sr); });
                         })('Cn', data, symResult);
                         appendToggleGroup(togglesDiv, btn, key, 'Cn', data, symResult);
+                        cnGlobalIdx[n]++;
                     }
                 }
             }
@@ -5074,13 +5742,16 @@
                     var key = 'sigma_' + JSON.stringify(data);
                     var btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = 'sym-toggle';
+                    var isRelaxed = cr && (sigmaGlobalIdx >= crSigmaTotal);
+                    btn.className = 'sym-toggle' + (isRelaxed ? ' relaxed-only' : '');
                     btn.textContent = pt + (pGroup.length > 1 ? ' (' + (s+1) + ')' : '');
+                    if (isRelaxed) btn.title = 'Detectado solo con tolerancia ampliada';
                     btn.setAttribute('data-sym-key', key);
                     (function(d, sr) {
                         btn.addEventListener('click', function() { toggleSymElement('sigma', d, sr); });
                     })(data, symResult);
                     appendToggleGroup(togglesDiv, btn, key, 'sigma', data, symResult);
+                    sigmaGlobalIdx++;
                 }
             }
 
@@ -5090,8 +5761,10 @@
                 var key = 'inv_' + JSON.stringify(data);
                 var btn = document.createElement('button');
                 btn.type = 'button';
-                btn.className = 'sym-toggle';
+                var isRelaxed = cr && !crHasInv;
+                btn.className = 'sym-toggle' + (isRelaxed ? ' relaxed-only' : '');
                 btn.textContent = 'i';
+                if (isRelaxed) btn.title = 'Detectado solo con tolerancia ampliada';
                 btn.setAttribute('data-sym-key', key);
                 (function(sr) {
                     btn.addEventListener('click', function() { toggleSymElement('inv', {}, sr); });
@@ -5107,8 +5780,10 @@
                     var key = 'Sn_' + JSON.stringify(data);
                     var btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = 'sym-toggle';
+                    var isRelaxed = cr && (i >= (crSnCounts[n] || 0));
+                    btn.className = 'sym-toggle' + (isRelaxed ? ' relaxed-only' : '');
                     btn.textContent = 'S' + n + (symResult.snAxes[n].length > 1 ? ' (' + (i+1) + ')' : '');
+                    if (isRelaxed) btn.title = 'Detectado solo con tolerancia ampliada';
                     btn.setAttribute('data-sym-key', key);
                     (function(d, sr) {
                         btn.addEventListener('click', function() { toggleSymElement('Sn', d, sr); });
@@ -5121,8 +5796,9 @@
             document.getElementById('sym-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 
             // Copy button
+            var modeNote = isSolMode ? ' [' + (symResult.tolMode === 'manual' ? 'manual' : 'disolución') + ', tol=' + symResult.tolUsed.toFixed(2) + 'Å]' : '';
             var copyText = 'Simetría Molecular\n';
-            copyText += 'Grupo Puntual: ' + formatPGPlain(symResult.pointGroup) + '\n';
+            copyText += 'Grupo Puntual: ' + formatPGPlain(symResult.pointGroup) + modeNote + '\n';
             copyText += 'Elementos: ' + symResult.elements.join(', ') + '\n';
 
             document.getElementById('sym-copy-btn').onclick = function() {
@@ -5469,7 +6145,7 @@
             errorDiv.classList.add('hidden');
 
             try {
-                var result = detectSymmetry(mol.atoms);
+                var result = runSymmetryAnalysis(mol.atoms);
                 renderSymmetryResults(result);
             } catch (e) {
                 errorDiv.textContent = 'Error: ' + e.message;
@@ -5499,20 +6175,89 @@
             document.getElementById('sym-db-section').classList.add('hidden');
         });
 
-        // Parse XYZ
+        // Parse XYZ (manual: oculta aviso de unidad asimétrica)
         document.getElementById('sym-parse-xyz-btn').addEventListener('click', function() {
             var text = document.getElementById('sym-xyz-input').value;
             var errorDiv = document.getElementById('sym-error');
             errorDiv.classList.add('hidden');
+            var asymWarn = document.getElementById('sym-asym-warning');
+            if (asymWarn) asymWarn.style.display = 'none';
 
             try {
                 var atoms = parseXYZ(text);
-                var result = detectSymmetry(atoms);
+                var result = runSymmetryAnalysis(atoms);
                 renderSymmetryResults(result);
             } catch (e) {
                 errorDiv.textContent = 'Error: ' + e.message;
                 errorDiv.classList.remove('hidden');
             }
+        });
+
+        // ── Carga de ficheros moleculares (CIF / PDB / RES / XYZ) ────────────
+
+        function handleFileLoad(file) {
+            var errorDiv = document.getElementById('sym-error');
+            errorDiv.classList.add('hidden');
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    var atoms  = detectAndParse(ev.target.result, file.name);
+                    var xyz    = atomsToXYZText(atoms, file.name);
+                    document.getElementById('sym-xyz-input').value = xyz;
+                    var note = document.getElementById('sym-xyz-from-file-note');
+                    if (note) note.style.display = 'inline';
+                    // Ocultar aviso de unidad asimétrica (la expansión de simetría es automática)
+                    var asymWarn = document.getElementById('sym-asym-warning');
+                    if (asymWarn) asymWarn.style.display = 'none';
+                    var result = runSymmetryAnalysis(atoms);
+                    renderSymmetryResults(result);
+                } catch(e) {
+                    errorDiv.textContent = 'Error al leer ' + file.name + ': ' + e.message;
+                    errorDiv.classList.remove('hidden');
+                }
+            };
+            reader.onerror = function() {
+                errorDiv.textContent = 'No se pudo leer el archivo.';
+                errorDiv.classList.remove('hidden');
+            };
+            reader.readAsText(file);
+        }
+
+        // Input de fichero (click en la zona)
+        document.getElementById('sym-file-input').addEventListener('change', function(e) {
+            var file = e.target.files && e.target.files[0];
+            if (file) handleFileLoad(file);
+            this.value = '';   // permite reseleccionar el mismo fichero
+        });
+
+        // Drag-and-drop
+        (function() {
+            var zone = document.getElementById('sym-file-drop');
+            zone.addEventListener('dragover',  function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', function()  { zone.classList.remove('drag-over'); });
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                zone.classList.remove('drag-over');
+                var file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+                if (file) handleFileLoad(file);
+            });
+        })();
+
+        // Control de tolerancia: botones de modo
+        document.querySelectorAll('.tol-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tol-btn').forEach(function(b) { b.classList.remove('active'); });
+                btn.classList.add('active');
+                symTolMode = btn.getAttribute('data-tol-mode');
+                var sliderWrap = document.getElementById('tol-slider-wrap');
+                sliderWrap.style.display = (symTolMode === 'manual') ? 'flex' : 'none';
+            });
+        });
+
+        // Slider de tolerancia manual
+        document.getElementById('tol-slider').addEventListener('input', function() {
+            symTolManual = parseInt(this.value) / 100;
+            document.getElementById('tol-slider-val').textContent = symTolManual.toFixed(2) + '\u00C5';
         });
 
         }); // Fin de DOMContentLoaded
