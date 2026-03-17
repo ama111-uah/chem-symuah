@@ -22,7 +22,9 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f172a'/%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%232dd4bf'/%3E%3Cstop offset='100%25' stop-color='%23a78bfa'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='16' cy='16' r='2.8' fill='url(%23g)'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='4.5' fill='none' stroke='url(%23g)' stroke-width='1.5'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='4.5' fill='none' stroke='url(%23g)' stroke-width='1.5' transform='rotate(60 16 16)'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='4.5' fill='none' stroke='url(%23g)' stroke-width='1.5' transform='rotate(120 16 16)'/%3E%3C/svg%3E">
 
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Spectral:wght@400;600&display=swap" rel="stylesheet">
-    <script src="3Dmol-min.js"></script>
+    <script src="three.min.js"></script>
+    <script src="OrbitControls.js"></script>
+    <script src="threemol.js"></script>
     <style>
         :root {
             --glass-blue: #2dd4bf;
@@ -716,7 +718,7 @@
         .viewer-container {
             width: 100%;
             height: 350px;
-            background: #e8d5b0;
+            background: #f7f7f7;
             border: 1px solid var(--border);
             border-radius: 8px;
             margin-top: 12px;
@@ -1758,7 +1760,7 @@
         </div>
 
         <footer>
-            Chem&amp;SymUAH v1.4.1 | Avelino Martín - QUIMCOGEN - Universidad de Alcalá | Herramienta para investigación química
+            Chem&amp;SymUAH v1.5.0 | Avelino Martín - QUIMCOGEN - Universidad de Alcalá | Herramienta para investigación química
         </footer>
     </div>
 
@@ -3757,7 +3759,7 @@
             var scale = 1.5;
 
             var viewer = $3Dmol.createViewer(viewerDiv, {
-                backgroundColor: 0xe8d5b0,
+                backgroundColor: 0xf7f7f7,
                 antialias: true
             });
 
@@ -3781,8 +3783,8 @@
                 position: {x: 0, y: labelOffset, z: 0},
                 fontSize: 12,
                 fontColor: '#1a0a00',
-                backgroundColor: '#e8d5b0',
-                borderColor: '#e8d5b0',
+                backgroundColor: '#f7f7f7',
+                borderColor: '#f7f7f7',
                 borderThickness: 0,
                 inFront: true,
                 showBackground: true
@@ -3823,8 +3825,8 @@
                     position: {x: lx, y: ly, z: lz},
                     fontSize: 11,
                     fontColor: '#1a0a00',
-                    backgroundColor: '#e8d5b0',
-                    borderColor: '#e8d5b0',
+                    backgroundColor: '#f7f7f7',
+                    borderColor: '#f7f7f7',
                     borderThickness: 0,
                     inFront: true,
                     showBackground: true
@@ -3865,8 +3867,8 @@
                             },
                             fontSize: 10,
                             fontColor: '#1a0a00',
-                            backgroundColor: '#e8d5b0',
-                            borderColor: '#e8d5b0',
+                            backgroundColor: '#f7f7f7',
+                            borderColor: '#f7f7f7',
                             borderThickness: 0,
                             inFront: true,
                             showBackground: true
@@ -3898,8 +3900,8 @@
                     position: {x: llx, y: lly, z: llz},
                     fontSize: 9,
                     fontColor: '#5b21b6',
-                    backgroundColor: '#e8d5b0',
-                    borderColor: '#e8d5b0',
+                    backgroundColor: '#f7f7f7',
+                    borderColor: '#f7f7f7',
                     borderThickness: 0,
                     inFront: true,
                     showBackground: true
@@ -5307,7 +5309,7 @@
             viewerDiv.innerHTML = '';
 
             symViewer = $3Dmol.createViewer(viewerDiv, {
-                backgroundColor: 0xe8d5b0,
+                backgroundColor: 0xf7f7f7,
                 antialias: true
             });
             var v = symViewer;
