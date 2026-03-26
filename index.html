@@ -2886,6 +2886,14 @@
             'HSO4':  { charge: -1, name: 'Bisulfato' },
             'BF4':   { charge: -1, name: 'Tetrafluoroborato' },
             'PF6':   { charge: -1, name: 'Hexafluorofosfato' },
+            'SbF6':  { charge: -1, name: 'Hexafluoroantimonato' },
+            'AsF6':  { charge: -1, name: 'Hexafluoroarsenato' },
+            'NbF6':  { charge: -1, name: 'Hexafluoroniobato' },
+            'TaF6':  { charge: -1, name: 'Hexafluorotantalato' },
+            'AlCl4': { charge: -1, name: 'Tetracloroaluminato' },
+            'FeCl4': { charge: -1, name: 'Tetracloroferrato' },
+            'IO3':   { charge: -1, name: 'Iodato' },
+            'IO4':   { charge: -1, name: 'Periodato' },
             'SiO3':  { charge: -2, name: 'Silicato' },
             'BO3':   { charge: -3, name: 'Borato' }
         };
@@ -4572,6 +4580,11 @@
                     continue;
                 }
                 if (a !== undefined && sfac.length > 0) {
+                    // HKLF y END marcan el fin de la sección de átomos → parar
+                    if (kw === 'HKLF' || kw === 'END') break;
+                    // Picos Q de densidad electrónica residual (Q1, Q2, Q23…) → ignorar
+                    if (/^Q\d*$/i.test(p[0])) continue;
+                    // Otras instrucciones de refinamiento → saltar
                     if (stop.indexOf(kw.toLowerCase()) !== -1) continue;
                     if (p.length >= 5) {
                         var idx = parseInt(p[1]);
